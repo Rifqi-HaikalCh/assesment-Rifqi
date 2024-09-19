@@ -1,0 +1,108 @@
+<form name="izinForm" novalidate>
+    <h3>Pengajuan Izin Mahasiswa</h3>
+
+    <p>Jenis Izin</p>
+    <select cam-variable-name="category"
+            cam-variable-type="String"
+            label="jenis izin"
+            class="form-control"
+            cam-choices="AVAILABLE_PRODUCT_TYPES">
+        <option value="Keperluan Pribadi">Keperluan Pribadi</option>
+        <option value="Sakit">Sakit</option>
+        <option value="Lainnya">Lainnya</option>
+    </select>
+
+    <p>Tanggal Izin</p>
+    <p class="input-group">
+        <input type="text"
+               cam-variable-name="date"
+               cam-variable-type="Date"
+               class="form-control"
+               label="Tanggal Izin"
+               uib-datepicker-popup="yyyy-MM-dd'T'HH:mm:ss"
+               is-open="dateFieldOpened"
+               ng-model="formData.date"
+               ng-change="validateDate()"
+               required />
+
+        <span class="input-group-btn">
+            <button type="button"
+                    class="btn btn-default"
+                    ng-click="open($event)">
+              <i class="glyphicon glyphicon-calendar"></i>
+            </button>
+        </span>
+    </p>
+
+    <!-- Tampilkan pesan kesalahan jika tanggal tidak valid -->
+    <p style="color:red;" ng-show="invalidDate">
+        Tanggal izin tidak boleh kurang dari hari ini.
+    </p>
+
+    <p>Deskripsi</p>
+    <textarea cam-variable-name="description"
+              cam-variable-type="String"
+              class="form-control"
+              label="Deskripsi"
+              required>
+    </textarea>
+
+    <p>Bukti Pendukung</p>
+    <input type="file"
+           cam-variable-name="evidence"
+           cam-variable-type="File"
+           class="form-control"
+           label="Bukti Pendukung"
+           cam-max-filesize="10000000"
+           ng-model="formData.evidence"
+           onchange="angular.element(this).scope().uploadFileToLocalStorage(this.files)" />
+
+    <!-- Tampilkan pesan kesalahan jika bukti pendukung tidak ada -->
+    <p style="color:red;" ng-show="noEvidence">
+        Bukti pendukung harus diunggah.
+    </p>
+
+    <script cam-script type="text/form-script">
+        $scope.open = function($event) {
+          $event.preventDefault();
+          $event.stopPropagation();
+
+          $scope.dateFieldOpened = true;
+        };
+
+        // Fungsi untuk validasi tanggal
+        $scope.validateDate = function() {
+          var today = new Date();
+          today.setHours(0, 0, 0, 0);  // Menghilangkan jam, menit, dan detik dari tanggal hari ini
+
+          var selectedDate = new Date($scope.formData.date);
+
+          if (selectedDate < today) {
+            $scope.invalidDate = true;  // Menandakan bahwa tanggal tidak valid
+          } else {
+            $scope.invalidDate = false; // Tanggal valid
+          }
+        };
+
+        // Fungsi untuk menyimpan bukti pendukung ke Local Storage
+        $scope.uploadFileToLocalStorage = function(files) {
+          if (files.length === 0) {
+            $scope.noEvidence = true;  // Jika file tidak ada, set invalid
+          } else {
+            $scope.noEvidence = false; // Jika file ada, set valid
+
+            // Baca file dan simpan sebagai base64 di Local Storage
+            var reader = new FileReader();
+            reader.onload = function(event) {
+              var base64String = event.target.result;
+              // Simpan file sebagai base64 ke Local Storage
+              localStorage.setItem('evidenceFile', base64String);
+              // Simpan nama file untuk digunakan nanti
+              localStorage.setItem('evidenceFileName', files[0].name);
+              alert("Bukti pendukung telah berhasil diunggah dan disimpan ke Local Storage.");
+            };
+            reader.readAsDataURL(files[0]);  // Membaca file sebagai DataURL (base64)
+          }
+        };
+    </script>
+</form>

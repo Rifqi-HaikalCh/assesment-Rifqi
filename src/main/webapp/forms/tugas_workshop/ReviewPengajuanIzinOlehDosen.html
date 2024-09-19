@@ -1,0 +1,80 @@
+<form>
+
+    <!-- Semua field dari form pengajuan izin mahasiswa, dibuat readonly -->
+    <h3>Review Pengajuan Izin Mahasiswa</h3>
+
+    <p>Jenis Izin</p>
+    <select cam-variable-name="category"
+            cam-variable-type="String"
+            label="Jenis Izin"
+            class="form-control"
+            ng-model="formData.category"
+            disabled>
+        <option value="Keperluan Pribadi">Keperluan Pribadi</option>
+        <option value="Sakit">Sakit</option>
+        <option value="Lainnya">Lainnya</option>
+    </select>
+
+    <p>Tanggal Izin</p>
+    <p class="input-group">
+        <input type="text"
+               cam-variable-name="date"
+               cam-variable-type="Date"
+               class="form-control"
+               label="Tanggal Izin"
+               ng-model="formData.date"
+               disabled />
+        <span class="input-group-btn">
+            <button type="button"
+                    class="btn btn-default"
+                    disabled>
+              <i class="glyphicon glyphicon-calendar"></i>
+            </button>
+        </span>
+    </p>
+
+    <p>Deskripsi</p>
+    <textarea cam-variable-name="description"
+              cam-variable-type="String"
+              class="form-control"
+              label="Deskripsi"
+              ng-model="formData.description"
+              disabled>
+    </textarea>
+
+    <!-- Bukti Pendukung (Download Link) -->
+    <p>Bukti Pendukung</p>
+    <a ng-if="evidenceDownloadUrl && evidenceFileName"
+       ng-href="{{evidenceDownloadUrl}}"
+       download="{{evidenceFileName}}"
+       class="btn btn-success">
+        <i class="glyphicon glyphicon-download"></i> Download Bukti Pendukung
+    </a>
+    <p ng-if="!evidenceDownloadUrl || !evidenceFileName" class="text-warning">
+        Bukti pendukung tidak tersedia.
+    </p>
+
+    <!-- Field baru untuk review -->
+    <p>Apakah pengajuan izin disetujui?</p>
+    <select cam-variable-name="isApproved"
+            cam-variable-type="String"
+            label="Apakah pengajuan izin disetujui?"
+            class="form-control"
+            required>
+        <option value="setuju">Setuju</option>
+        <option value="tolak">Tolak</option>
+    </select>
+
+    <p>Catatan</p>
+    <textarea cam-variable-name="remark"
+              cam-variable-type="String"
+              class="form-control"
+              label="Catatan">
+    </textarea>
+
+    <script cam-script type="text/form-script">
+        // Mengambil file dari Local Storage untuk ditampilkan sebagai link download
+        $scope.evidenceFileName = localStorage.getItem('evidenceFileName');
+        $scope.evidenceDownloadUrl = localStorage.getItem('evidenceFile');
+    </script>
+</form>
